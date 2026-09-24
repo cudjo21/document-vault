@@ -6,10 +6,22 @@ Built for the papers a family actually has: passports and ID cards from several 
 
 ## Install
 
-- **Claude desktop app (Cowork):** download `document-vault.plugin` from the latest release on this page and open it in Claude, or add this repository as a plugin marketplace (`cudjo21/document-vault`) if your app offers that.
-- **Claude Code:** `/plugin marketplace add cudjo21/document-vault`, then `/plugin install document-vault@document-vault`.
+**What you need:** a paid Claude plan (Pro, Max, Team or Enterprise) and the Claude desktop app on a Mac or PC.
 
-Then connect an empty folder (ideally in iCloud Drive, Google Drive, Dropbox or OneDrive) and say "set up a document vault".
+1. In the Claude desktop app, open **Cowork**, then **Customize** in the left sidebar, then the **Plugins** tab.
+2. Under **Personal plugins**, click **+** and choose **Add marketplace**.
+3. Enter `cudjo21/document-vault` and confirm.
+4. Find **Document Vault** in the list and click **Install**.
+
+**Start your vault:**
+
+5. Create an empty folder called `DocumentVault`, ideally in iCloud Drive, Google Drive, Dropbox or OneDrive (backed up, reachable from your phone, shareable with a partner).
+6. Start a new Cowork task, add that folder with the **Add folder** button, and say **"set up a document vault"**. Claude asks who's in the family and which languages your documents are in, then builds the vault.
+7. Drop documents into `00.Inbox` and say **"process my inbox"**.
+
+**Updates:** when a new version is out, click **Update** next to the Document Vault marketplace on the Plugins page.
+
+**Other ways:** upload `document-vault.plugin` from the Releases page on the same Plugins page (no automatic updates), or in Claude Code run `/plugin marketplace add cudjo21/document-vault` and then `/plugin install document-vault@document-vault`.
 
 ## Skills
 
