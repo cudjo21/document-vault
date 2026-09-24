@@ -1,10 +1,11 @@
 {
   "name": "document-vault",
   "displayName": "Document Vault",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A family document vault run by Claude: drop scans into an inbox and Claude reads them (privacy-masked), names and files them by person and category, combines front and back scans, parks duplicates for review, tracks expiry dates, and never deletes anything.",
   "author": {
-    "name": "Ilya"
+    "name": "Ilya",
+    "url": "https://github.com/cudjo21"
   },
   "license": "MIT",
   "keywords": [
@@ -16,5 +17,7 @@
     "expiry",
     "organize",
     "ocr"
-  ]
+  ],
+  "homepage": "https://github.com/cudjo21/document-vault",
+  "repository": "https://github.com/cudjo21/document-vault"
 }

@@ -204,16 +204,35 @@ Images are looked at directly only when the text isn't enough, and Claude says s
 - OCR struggles with handwriting, faded stamps and small cards; Claude will ask or look at the image rather than guess.
 - Password-protected PDFs can't be read; you'll be asked what they are.
 
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| Claude says no vault was found | The vault folder isn't connected to this task. Add it with the **Add folder** button and ask again. |
+| "MISSING tesseract" or "MISSING pdfinfo" during set-up | Install the tools once: on a Mac `brew install tesseract poppler`, on Linux `sudo apt install tesseract-ocr poppler-utils`. Then say "check the vault tools". |
+| A language isn't read (text comes out as gibberish) | Say "add Spanish to the vault languages" (or whichever). Claude downloads the language file and updates `99.System/vault.json`. |
+| A file seems missing | Cloud drives can keep files online only. Right-click the vault folder and choose **Keep Downloaded** (iCloud) or **Available offline**, then run a check-up. |
+| A batch went wrong | Say "undo the last batch". Every move is logged and reversible. |
+| Something was misfiled by hand | Run "check my vault": it lists files missing from the catalog and names that break the rules, and proposes fixes. |
+| Password-protected PDF | It can't be read; Claude asks you what it is and files it by your answer. |
+
+## Support and privacy
+
+- Questions, bugs and ideas: [GitHub issues](https://github.com/cudjo21/document-vault/issues).
+- Security or privacy problems: see [SECURITY.md](SECURITY.md) (please don't post real document contents in public issues).
+- Privacy policy: [PRIVACY.md](PRIVACY.md). In short: the plugin collects nothing and has no server; your documents stay in your folder.
+
 ## What's inside
 
 ```
-.claude-plugin/plugin.json
+.claude-plugin/     plugin.json, marketplace.json
 skills/            set-up-vault, process-inbox, vault-check-up, find-document
 guide/             vault-basics.md (shared rules for all skills)
 scripts/           copied into each vault's 99.System/Scripts/
    create_vault.py  add_person.py  check_tools.py  inbox_scan.py  page_scan.py  merge_images.py
    inbox_file.py  undo_moves.py  audit_duplicates.py  vault_check.py  find_docs.py
    NAMING.template.md
+PRIVACY.md  SECURITY.md  LICENSE
 ```
 
 Author: Ilya. License: MIT.

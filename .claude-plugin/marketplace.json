@@ -3,6 +3,9 @@
   "owner": {
     "name": "Ilya"
   },
+  "metadata": {
+    "description": "Document Vault: a family document filing system run by Claude."
+  },
   "plugins": [
     {
       "name": "document-vault",
