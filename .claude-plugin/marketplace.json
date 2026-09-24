@@ -1,0 +1,13 @@
+{
+  "name": "document-vault",
+  "owner": {
+    "name": "Ilya"
+  },
+  "plugins": [
+    {
+      "name": "document-vault",
+      "source": "./",
+      "description": "A family document vault run by Claude: inbox, privacy-masked reading, consistent names, duplicates to review, expiry tracking. Never deletes."
+    }
+  ]
+}

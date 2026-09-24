@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""Read-only health check of a Document Vault. Never moves or changes anything.
+Usage: python3 vault_check.py [--months N]     (default N = 6)
+Reports:
+  1. documents expired or expiring within N months (from catalog expiry_date)
+  2. library files not in the catalog
+  3. catalog rows marked filed whose file is missing (or only an iCloud placeholder)
+  4. names that break the naming convention
+  5. empty folders, stray files at the top level, files waiting in the inbox or in Review
+Output is metadata only (paths, kinds, dates): no document content."""
+import os, sys, csv, re, datetime, json
+
+SYS = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); VAULT = os.path.dirname(SYS)
+MONTHS = int(sys.argv[sys.argv.index("--months") + 1]) if "--months" in sys.argv else 6
+SKIP_TOP = {"00.Inbox", "90.Review", "99.System"}
+IGNORE = {".DS_Store", "Icon\r", "desktop.ini", "Thumbs.db"}
+NAME_RE = re.compile(r"^[A-Z]{2,4}(-(MOM|DAD|REL))?_(\d{4}-\d{2}-\d{2}_)?[a-z0-9]+(-[a-zA-Z0-9]+)*(_exp\d{4}-\d{2})?\.[a-z0-9]+$")
+
+def rel(p): return os.path.relpath(p, VAULT)
+def add_months(d, n):
+    y, m = divmod(d.month - 1 + n, 12); return datetime.date(d.year + y, m + 1, min(d.day, 28))
+def parse(s):
+    for f in ("%Y-%m-%d", "%Y-%m"):
+        try: return datetime.datetime.strptime(s.strip(), f).date()
+        except Exception: pass
+    return None
+
+def main():
+    rows = list(csv.DictReader(open(os.path.join(SYS, "catalog.csv"), encoding="utf-8")))
+    filed = [r for r in rows if r.get("status", "").startswith("filed")]
+    today = datetime.date.today(); horizon = add_months(today, MONTHS)
+
+    print(f"== Expired or expiring by {horizon} ==")
+    exp = []
+    for r in filed:
+        d = parse(r.get("expiry_date", "") or "")
+        if d and d <= horizon: exp.append((d, r))
+    for d, r in sorted(exp, key=lambda x: x[0]):
+        state = "EXPIRED " if d < today else "expires "
+        print(f"  {state}{d}  {r['path']}")
+    if not exp: print("  none")
+
+    lib = set()
+    for top in sorted(os.listdir(VAULT)):
+        tp = os.path.join(VAULT, top)
+        if top in SKIP_TOP or top.startswith("."): continue
+        if os.path.isfile(tp):
+            continue
+        for dp, dn, fn in os.walk(tp):
+            dn[:] = [d for d in dn if not d.startswith(".")]
+            for f in fn:
+                if f in IGNORE: continue
+                lib.add(rel(os.path.join(dp, f)))
+    cat_paths = {r["path"] for r in filed}
+
+    print("== Library files not in the catalog ==")
+    placeholders = {p for p in lib if os.path.basename(p).startswith(".") and p.endswith(".icloud")}
+    real = {p for p in lib - placeholders if not os.path.basename(p).startswith(".")}
+    extra = sorted(real - cat_paths)
+    for p in extra: print("  " + p)
+    if not extra: print("  none")
+
+    print("== Catalog says filed, file missing ==")
+    miss = []
+    for p in sorted(cat_paths):
+        if os.path.exists(os.path.join(VAULT, p)): continue
+        ph = os.path.join(os.path.dirname(p), "." + os.path.basename(p) + ".icloud")
+        miss.append(p + ("   (in iCloud, not downloaded)" if ph in placeholders else ""))
+    for p in miss: print("  " + p)
+    if not miss: print("  none")
+
+    print("== Names that break the convention ==")
+    badn = [p for p in sorted(real) if not NAME_RE.match(os.path.basename(p))]
+    for p in badn: print("  " + p)
+    if not badn: print("  none")
+
+    print("== Other ==")
+    stray = [f for f in os.listdir(VAULT) if os.path.isfile(os.path.join(VAULT, f)) and f not in IGNORE and not f.startswith(".")]
+    if stray: print("  files at the top level: " + ", ".join(sorted(stray)))
+    empty = []
+    for dp, dn, fn in os.walk(VAULT):
+        if "/." in dp or rel(dp).startswith("99.System"): continue
+        if not [x for x in fn if x not in IGNORE] and not [d for d in dn if not d.startswith(".")] and dp != VAULT:
+            if os.sep in rel(dp) and not rel(dp).startswith("90.Review"):   # top-level person folders may be empty
+                empty.append(rel(dp))
+    if empty: print("  empty folders: " + ", ".join(sorted(empty)))
+    def count(d):
+        n = 0
+        for dp, dn, fn in os.walk(os.path.join(VAULT, d)):
+            n += len([f for f in fn if f not in IGNORE and not f.startswith(".")])
+        return n
+    print(f"  inbox: {count('00.Inbox')} file(s) waiting")
+    rv = os.path.join(VAULT, "90.Review")
+    if os.path.isdir(rv):
+        for d in sorted(os.listdir(rv)):
+            if os.path.isdir(os.path.join(rv, d)):
+                n = count(os.path.join("90.Review", d))
+                if n: print(f"  90.Review/{d}: {n} file(s)")
+    print(f"  catalog: {len(filed)} filed documents, {len(rows)} rows")
+
+if __name__ == "__main__":
+    main()
