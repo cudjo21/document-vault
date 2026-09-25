@@ -4,13 +4,13 @@
     "name": "Ilya"
   },
   "metadata": {
-    "description": "Document Vault: a family document filing system run by Claude."
+    "description": "Document Vault: a family document filing system run by Claude, with document packs for visa and other applications."
   },
   "plugins": [
     {
       "name": "document-vault",
       "source": "./",
-      "description": "A family document vault run by Claude: inbox, privacy-masked reading, consistent names, duplicates to review, expiry tracking. Never deletes."
+      "description": "A family document vault run by Claude: inbox, privacy-masked reading, consistent names, duplicates to review, expiry tracking, document packs for visas and other applications. Never deletes."
     }
   ]
 }

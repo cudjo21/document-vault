@@ -33,6 +33,7 @@ NN.Relatives/        flat: parents, grandparents, other relatives (optional)
    inside each person/family folder, created only when needed:
    01.IDs 02.Health 03.Finance 04.Legal 05.Work 06.Education
    07.Activities 08.Property 09.Vehicles 10.Travel 99.Misc
+80.Packs/            document packs: numbered COPIES for an application (visa, renewal...), temporary
 90.Review/           Duplicates/<group>/, Unclear/, Split-originals/, Not-needed/, Expired/, Old-scripts/
 99.System/           NAMING.md, vault.json, catalog.csv, move-log.csv, Scripts/, tessdata/, .work/
 ```

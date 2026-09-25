@@ -4,6 +4,8 @@ A Claude plugin that turns a messy pile of family paperwork into one tidy folder
 
 Built for the papers a family actually has: passports and ID cards from several countries, residence permits, visas, payslips, tax statements, leases, medical results, certificates, often in several languages. It also tells you what matters in them, like a passport that expires soon.
 
+When you apply for something (a visa, a residence permit renewal, a mortgage), paste the list of required documents and Claude gathers them into a ready pack: copies in the list's order, per person, with a checklist of what's still missing.
+
 ## Install
 
 **What you need:** a paid Claude plan (Pro, Max, Team or Enterprise) and the Claude desktop app on a Mac or PC.
@@ -25,7 +27,7 @@ Built for the papers a family actually has: passports and ID cards from several 
 
 ## Skills
 
-The plugin has four skills. You don't need to call them by name: just say what you want in plain words and Claude picks the right one.
+The plugin has five skills. You don't need to call them by name: just say what you want in plain words and Claude picks the right one.
 
 | Skill | Say something like | You get |
 |---|---|---|
@@ -33,6 +35,7 @@ The plugin has four skills. You don't need to call them by name: just say what y
 | Process inbox | "Process my inbox" | New documents named, filed and catalogued |
 | Vault check-up | "Check my vault" | Expiring documents and anything out of place |
 | Find a document | "Where is Maria's passport?" | The file, and the facts about it |
+| Prepare a pack | "We're applying for a US visa, here's the list" | A folder of copies in the list's order, per person, with a checklist |
 
 ### 1. Set up a vault (`set-up-vault`)
 
@@ -73,6 +76,17 @@ Ask anything about what's in the vault.
 - **Answers from the catalog:** folder and file name, expiry and issue dates, issuer. It opens a file only if the catalog doesn't have the answer, and still never reads out ID, account or policy numbers or passwords.
 - **Sends you the file** in the chat only when you ask, since that copies it off your computer.
 
+### 5. Prepare a pack (`prepare-pack`)
+
+For any application that asks for a list of documents: a visa, a residence permit renewal, citizenship, a mortgage, a school or a new job.
+
+- **Paste the list** and say who is applying: "We're applying for US visas for me and Maria, here's what the consulate wants: ..."
+- **Claude matches every item** to the vault and shows a table first: what was found, what is missing (photos, forms), and what needs a look: a passport that expires less than 6 months after the trip, bank statements older than the list allows, a translation that may be needed.
+- **Several passports?** If someone has more than one (two nationalities, or an old and a new one), Claude asks which to include instead of guessing, and recommends one.
+- **Asks if you want combined PDFs:** separate files only, one PDF per person, or one for the whole family (handy for online portals). Lossless.
+- **Builds the pack** in `80.Packs/<name>/` after your go: copies only, numbered in the list's order (`01_`, `02_`...), one folder per person plus `00.Family`, and a `checklist.md` with a to-do list. The originals never move.
+- **When you're done,** say "archive the pack": it moves to `90.Review` for you to delete.
+
 ## Requirements
 
 - Claude desktop app (Cowork) with the vault folder connected.
@@ -98,7 +112,7 @@ You drop files in 00.Inbox → Claude scans and reads them → proposal table (n
 
 ## The rules
 
-1. **Nothing is ever deleted by Claude.** Redundant or doubtful files go to `90.Review`. Only you delete.
+1. **Nothing is ever deleted by Claude.** Redundant or doubtful files go to `90.Review`. Only you delete. Packs for applications are copies; the originals never move.
 2. **Nothing is ever overwritten.** If a new name already exists, the batch stops.
 3. **Proposal first, then action.** Nothing moves until you approve the exact list.
 4. **Everything is logged and reversible.** Every move is recorded with its old and new place and a fingerprint of the file; any batch can be undone.
@@ -152,6 +166,7 @@ DocumentVault/                              (in a cloud drive, shared with your 
 ├── 06.Relatives/
 │   ├── AS-MOM_passport-GBR_exp2029-11.pdf
 │   └── MS-DAD_birth-certificate-ESP.pdf
+├── 80.Packs/                               document packs for applications (copies, temporary)
 ├── 90.Review/                              yours to clear
 │   ├── Duplicates/AS_passport-GBR_exp2030-06/   (weaker copies + comparison.md)
 │   ├── Unclear/
@@ -200,6 +215,7 @@ Images are looked at directly only when the text isn't enough, and Claude says s
 - Keep a separate backup; a cloud drive syncs mistakes too.
 - Scan at 300 dpi, in colour, with the card filling the frame.
 - Clear `90.Review` every few weeks. It's a waiting room, not an archive.
+- Archive a pack once the application is done ("archive the pack"), so old copies don't pile up.
 - Avoid renaming or moving library files by hand; if you do, run a check-up so the catalog stays right.
 - OCR struggles with handwriting, faded stamps and small cards; Claude will ask or look at the image rather than guess.
 - Password-protected PDFs can't be read; you'll be asked what they are.
@@ -226,13 +242,13 @@ Images are looked at directly only when the text isn't enough, and Claude says s
 
 ```
 .claude-plugin/     plugin.json, marketplace.json
-skills/            set-up-vault, process-inbox, vault-check-up, find-document
+skills/            set-up-vault, process-inbox, vault-check-up, find-document, prepare-pack
 guide/             vault-basics.md (shared rules for all skills)
 scripts/           copied into each vault's 99.System/Scripts/
-   create_vault.py  add_person.py  check_tools.py  inbox_scan.py  page_scan.py  merge_images.py
+   create_vault.py  add_person.py  make_pack.py  check_tools.py  inbox_scan.py  page_scan.py  merge_images.py
    inbox_file.py  undo_moves.py  audit_duplicates.py  vault_check.py  find_docs.py
    NAMING.template.md
-PRIVACY.md  SECURITY.md  LICENSE
+PRIVACY.md  SECURITY.md  CHANGELOG.md  LICENSE
 ```
 
 Author: Ilya. License: MIT.

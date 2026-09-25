@@ -12,7 +12,7 @@ import os, sys, csv, re, datetime, json
 
 SYS = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); VAULT = os.path.dirname(SYS)
 MONTHS = int(sys.argv[sys.argv.index("--months") + 1]) if "--months" in sys.argv else 6
-SKIP_TOP = {"00.Inbox", "90.Review", "99.System"}
+SKIP_TOP = {"00.Inbox", "80.Packs", "90.Review", "99.System"}   # packs are deliberate copies
 IGNORE = {".DS_Store", "Icon\r", "desktop.ini", "Thumbs.db"}
 NAME_RE = re.compile(r"^[A-Z]{2,4}(-(MOM|DAD|REL))?_(\d{4}-\d{2}-\d{2}_)?[a-z0-9]+(-[a-zA-Z0-9]+)*(_exp\d{4}-\d{2})?\.[a-z0-9]+$")
 
@@ -81,7 +81,7 @@ def main():
     for dp, dn, fn in os.walk(VAULT):
         if "/." in dp or rel(dp).startswith("99.System"): continue
         if not [x for x in fn if x not in IGNORE] and not [d for d in dn if not d.startswith(".")] and dp != VAULT:
-            if os.sep in rel(dp) and not rel(dp).startswith("90.Review"):   # top-level person folders may be empty
+            if os.sep in rel(dp) and not rel(dp).startswith(("90.Review", "80.Packs")):   # top-level person folders may be empty
                 empty.append(rel(dp))
     if empty: print("  empty folders: " + ", ".join(sorted(empty)))
     def count(d):
@@ -90,6 +90,12 @@ def main():
             n += len([f for f in fn if f not in IGNORE and not f.startswith(".")])
         return n
     print(f"  inbox: {count('00.Inbox')} file(s) waiting")
+    pk = os.path.join(VAULT, "80.Packs")
+    if os.path.isdir(pk):
+        for d in sorted(os.listdir(pk)):
+            if os.path.isdir(os.path.join(pk, d)):
+                age = (datetime.date.today() - datetime.date.fromtimestamp(os.path.getmtime(os.path.join(pk, d)))).days
+                print(f"  pack: 80.Packs/{d} ({count(os.path.join('80.Packs', d))} file(s), {age} days old; move to 90.Review when done)")
     rv = os.path.join(VAULT, "90.Review")
     if os.path.isdir(rv):
         for d in sorted(os.listdir(rv)):

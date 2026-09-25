@@ -25,7 +25,7 @@ CATALOG_HEADER = ("path,person,category,doc_kind,doc_date,expiry_date,original_t
 MOVELOG_HEADER = "timestamp,batch,action,old_path,new_path,sha256,reason"
 DEFAULT_LANGS = ["eng", "por", "rus", "heb"]   # English, Portuguese, Russian, Hebrew
 VAULT_SCRIPTS = ["inbox_scan.py", "inbox_file.py", "undo_moves.py", "merge_images.py", "page_scan.py",
-                 "audit_duplicates.py", "vault_check.py", "find_docs.py", "check_tools.py", "add_person.py"]
+                 "audit_duplicates.py", "vault_check.py", "find_docs.py", "check_tools.py", "add_person.py", "make_pack.py"]
 
 def main():
     if len(sys.argv) < 3: sys.exit(__doc__)

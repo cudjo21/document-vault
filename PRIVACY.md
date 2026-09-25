@@ -1,6 +1,6 @@
 # Privacy policy: Document Vault plugin
 
-Last updated: 24 September 2026
+Last updated: 25 September 2026
 
 ## Short version
 
@@ -8,8 +8,9 @@ The Document Vault plugin does not collect, send or store any of your data anywh
 
 ## What the plugin does with your files
 
-- The plugin is a set of instructions for Claude plus small Python scripts. The scripts run on your computer, inside the vault folder you connect, and only when you ask Claude to do something (set up, process the inbox, check-up, find).
+- The plugin is a set of instructions for Claude plus small Python scripts. The scripts run on your computer, inside the vault folder you connect, and only when you ask Claude to do something (set up, process the inbox, check-up, find, prepare a pack).
 - The scripts read the files you put in the vault to work out what they are, and move and rename them after you approve. They never delete anything.
+- A document pack is a set of copies written into `80.Packs/` inside your vault; nothing is sent anywhere.
 - Everything they record (the catalog `99.System/catalog.csv`, the move log `99.System/move-log.csv`, settings `99.System/vault.json`) is written only into your vault folder.
 - Before any document text is shown to Claude, the scan script hides ID, passport, tax, account, card and phone numbers, IBANs, passport machine-readable lines and anything after words like password or PIN.
 
