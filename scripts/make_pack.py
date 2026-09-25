@@ -4,6 +4,7 @@ COPIES library files into 80.Packs/<pack name>/, numbered in the order of the re
 one subfolder per person. The library is never changed. Dry run by default; --apply to execute.
 
 Usage: python3 make_pack.py <plan.json> [--apply]
+       python3 make_pack.py --archive "<pack name>" [--apply]   move a finished pack to 90.Review/Packs/
 
 plan.json:
 {
@@ -42,11 +43,30 @@ def parse_date(s):
         except Exception: pass
     return None
 
+def is_locked(p):
+    r = subprocess.run(["pdfinfo", p], capture_output=True, text=True)
+    return "Incorrect password" in (r.stdout + r.stderr) or r.returncode != 0
+
 def add_months(d, m):
     y, mm = divmod(d.month - 1 + m, 12); return datetime.date(d.year + y, mm + 1, min(d.day, 28))
 
+def archive(name, apply):
+    src, dst = os.path.join("80.Packs", name), os.path.join("90.Review", "Packs", name)
+    if not name or "/" in name or not os.path.isdir(V(src)): sys.exit(f"no such pack: {src}")
+    if os.path.exists(V(dst)): sys.exit(f"already in Review: {dst} (nothing overwritten)")
+    print(("Moving" if apply else "Would move") + f" {src}/ -> {dst}/")
+    if not apply: print("dry run only; add --apply"); return
+    os.makedirs(os.path.dirname(V(dst)), exist_ok=True)
+    subprocess.run(["mv", "-n", V(src), V(dst)], check=True)
+    assert os.path.isdir(V(dst)) and not os.path.exists(V(src)), "move failed"
+    ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"); batch = "archive-" + re.sub(r"[^A-Za-z0-9-]+", "-", name).strip("-")
+    open(os.path.join(SYS, "move-log.csv"), "a").write(f'{ts},{batch},move,"{src}","{dst}",,"pack archived; delete it from Review when you no longer need it"\n')
+    print(f"done: logged as batch {batch}; undo with: python3 99.System/Scripts/undo_moves.py {batch} --apply")
+
 def main():
     if len(sys.argv) < 2: sys.exit(__doc__)
+    if "--archive" in sys.argv:
+        return archive(sys.argv[sys.argv.index("--archive") + 1].strip(), "--apply" in sys.argv)
     plan = json.load(open(sys.argv[1], encoding="utf-8")); apply = "--apply" in sys.argv
     name = plan["name"].strip()
     if not name or "/" in name or name.startswith("."): sys.exit("bad pack name")
@@ -70,6 +90,8 @@ def main():
         src = it["src"]
         if not os.path.isfile(V(src)): problems.append(f"file not found: {src}"); continue
         c = cat.get(src, {})
+        if plan.get("combine", "none") in ("person", "family") and src.lower().endswith(".pdf") and is_locked(V(src)):
+            note = (note + " password-protected: stays a separate file, not in the combined PDF").strip()
         exp = parse_date(c.get("expiry_date"))
         if exp and exp < today: status, note = "EXPIRED", (note + f" expired {exp}").strip()
         elif exp and travel and it.get("check_validity", True) and exp < add_months(travel, minv):
@@ -115,7 +137,8 @@ def main():
             tmp = tempfile.mkdtemp(); parts, skipped = [], []
             for f in files:
                 ext = f.rsplit(".", 1)[-1].lower()
-                if ext == "pdf": parts.append(V(f))
+                if ext == "pdf" and is_locked(V(f)): skipped.append(os.path.basename(f) + " (password-protected)")
+                elif ext == "pdf": parts.append(V(f))
                 elif ext in ("jpg", "jpeg", "png", "tif", "tiff"):
                     import img2pdf
                     p = os.path.join(tmp, f"{len(parts):03d}.pdf"); open(p, "wb").write(img2pdf.convert(V(f))); parts.append(p)

@@ -6,12 +6,15 @@ Reports:
   2. library files not in the catalog
   3. catalog rows marked filed whose file is missing (or only an iCloud placeholder)
   4. names that break the naming convention
-  5. empty folders, stray files at the top level, files waiting in the inbox or in Review
+  5. tidy suggestions: 5+ files of one topic or series directly in one folder (--tidy-min N)
+  6. expired documents outside an Archive folder: replaced by a newer one (archive) or not (ask)
+  7. empty folders, stray files at the top level, files waiting in the inbox or in Review
 Output is metadata only (paths, kinds, dates): no document content."""
 import os, sys, csv, re, datetime, json
 
 SYS = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); VAULT = os.path.dirname(SYS)
 MONTHS = int(sys.argv[sys.argv.index("--months") + 1]) if "--months" in sys.argv else 6
+TIDY_MIN = int(sys.argv[sys.argv.index("--tidy-min") + 1]) if "--tidy-min" in sys.argv else 5
 SKIP_TOP = {"00.Inbox", "80.Packs", "90.Review", "99.System"}   # packs are deliberate copies
 IGNORE = {".DS_Store", "Icon\r", "desktop.ini", "Thumbs.db"}
 NAME_RE = re.compile(r"^[A-Z]{2,4}(-(MOM|DAD|REL))?_(\d{4}-\d{2}-\d{2}_)?[a-z0-9]+(-[a-zA-Z0-9]+)*(_exp\d{4}-\d{2})?\.[a-z0-9]+$")
@@ -73,6 +76,41 @@ def main():
     badn = [p for p in sorted(real) if not NAME_RE.match(os.path.basename(p))]
     for p in badn: print("  " + p)
     if not badn: print("  none")
+
+    print(f"== Tidy suggestions ({TIDY_MIN}+ files of one topic in a folder) ==")
+    try: cfg = json.load(open(os.path.join(SYS, "vault.json"), encoding="utf-8"))
+    except Exception: cfg = {}
+    flat = {cfg.get("relatives_folder")} - {None}           # relatives stay flat by design
+    by_dir = {}
+    for p in real:
+        d, f = os.path.split(p)
+        parts = d.split(os.sep)
+        if parts[0] in flat or len(parts) != 2: continue          # only category folders; one level of subfolders at most
+        if parts[1].endswith(".IDs"): continue                     # IDs stay together by kind (passports, cards)
+        if re.match(r"^[A-Z-]+_\d{4}-\d{2}-\d{2}_", f): continue   # dated medical exams stay in date order
+        stem = re.sub(r"^[A-Z]{2,4}(-[A-Z]+)?_", "", os.path.splitext(f)[0])
+        key = stem.split("-")[0][:6]
+        by_dir.setdefault((d, key), []).append(f)
+    tidy = [(d, k, fs) for (d, k), fs in by_dir.items() if len(fs) >= TIDY_MIN]
+    for d, k, fs in sorted(tidy):
+        print(f"  {d}/  {len(fs)} files starting '{k}...': " + ", ".join(sorted(fs)[:4]) + (" ..." if len(fs) > 4 else ""))
+    if not tidy: print("  none")
+
+    print("== Expired, outside an Archive folder ==")
+    def who(r): return r.get("person") or os.path.basename(r["path"]).split("_")[0]
+    def kind(r): return r.get("doc_kind") or re.sub(r"^[A-Z]{2,4}(-[A-Z]+)?_", "", os.path.basename(r["path"])).split("-")[0]
+    shown = False
+    for d, r in sorted(exp, key=lambda x: x[0]):
+        if d >= today or "Archive" in r["path"].split("/"): continue
+        newer = [o for o in filed if o is not r and who(o) == who(r) and kind(o) == kind(r)
+                 and (o.get("country") or "") == (r.get("country") or "")
+                 and (parse(o.get("expiry_date", "") or "") or datetime.date.max) > d
+                 and (parse(o.get("expiry_date", "") or "") or datetime.date.max) >= today]
+        arch = os.path.join(os.path.dirname(r["path"]), "Archive") + "/"
+        if newer: print(f"  replaced   {r['path']}  -> {arch}  (newer: {os.path.basename(newer[0]['path'])})")
+        else:     print(f"  ASK        {r['path']}  (expired {d}, no replacement in the vault: renew, or archive to {arch}?)")
+        shown = True
+    if not shown: print("  none")
 
     print("== Other ==")
     stray = [f for f in os.listdir(VAULT) if os.path.isfile(os.path.join(VAULT, f)) and f not in IGNORE and not f.startswith(".")]

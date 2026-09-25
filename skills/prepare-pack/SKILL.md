@@ -16,7 +16,7 @@ From the user's message take: the pasted list, who is applying, and the purpose 
 Ask the rest in one AskUserQuestion round, only what is still unknown (up to four questions):
 
 - **Date:** the travel or appointment date (options such as "within a month", "in 1 to 3 months", "no date yet"; ask for the exact date in free text if they pick a period and validity matters). Used to check passport validity.
-- **Combined PDF:** "Besides separate files, should I also make combined PDFs in the list order?" Options: **Separate files only** / **One combined PDF per person** (recommended for online portals) / **One PDF for the whole family**. Say that combining is lossless and web pages (.html) can't be included.
+- **Combined PDF:** "Besides separate files, should I also make combined PDFs in the list order?" Options: **Separate files only** / **One combined PDF per person** (recommended for online portals) / **One PDF for the whole family**. Say that combining is lossless and that web pages (.html) and **password-protected PDFs can't be included**: those stay as separate files next to the combined PDF. If you already know that some matched files are locked (e.g. payslips), name them in the question.
 - **Pack name**, if not obvious: propose `YYYY-MM <country> <purpose>`, e.g. `2026-10 USA visa`.
 
 ## 2. Match every item to the vault
@@ -41,6 +41,7 @@ For each matched file, flag:
 - **Validity**: passports and permits that expire less than 6 months after the travel date (or the rule the list states).
 - **Recency**: statements or certificates older than the list allows ("last 3 months") using the catalog date; if the date is unknown, flag it to check.
 - **Translation**: the document's language differs from what the destination expects and the list asks for translations.
+- **Password-protected PDFs** (check with `pdfinfo`: "Incorrect password" means locked): they are copied into the pack as they are, but can't go into a combined PDF. Say so in the note. If the application needs one single file (many online portals do), tell the user the only way is an unlocked copy: they open the file with its password (e.g. in Preview on a Mac) and export it as a new PDF without a password, then drop it into the Inbox. Never ask for or handle the password yourself, and remind them that an unlocked copy is readable by anyone who gets it.
 
 Show one table: # | item | who | file | status (OK / check / expired / missing) | note. Keep it short; no document contents, no ID numbers. Wait for the user's go and apply their edits.
 
@@ -56,7 +57,7 @@ Compare the dry run with the approved table, fix any PROBLEM lines, then run wit
 
 ## 5. Report
 
-In a few lines: where the pack is (folder name), how many files per person, what is missing or needs checking (the to-do list), and that the combined PDFs are there if made. Remind that these are copies: when the application is done, say "archive the pack" and move the pack folder to `90.Review/Packs/` with a small `move` plan through `inbox_file.py` (the user deletes it from there). Never delete a pack.
+In a few lines: where the pack is (folder name), how many files per person, what is missing or needs checking (the to-do list), and that the combined PDFs are there if made. Remind that these are copies: when the application is done, say "archive the pack": run `python3 99.System/Scripts/make_pack.py --archive "<pack name>"` (dry run), then with `--apply`. It moves the whole pack to `90.Review/Packs/`, logs it and can be undone; the user deletes it from there. Never delete a pack.
 
 ## Rules
 

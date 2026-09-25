@@ -38,7 +38,7 @@ NN.Relatives/        flat: parents, grandparents, other relatives (optional)
 99.System/           NAMING.md, vault.json, catalog.csv, move-log.csv, Scripts/, tessdata/, .work/
 ```
 
-`99.System/vault.json` lists the people (name, code, folder), the family and relatives folders, and the OCR languages. Nothing else sits at the top level of the vault. To add a person later, use `99.System/Scripts/add_person.py <Name> <CODE>` (dry run first); never rename person folders by hand.
+`99.System/vault.json` lists the people (name, code, folder), the family and relatives folders, and the OCR languages. Nothing else sits at the top level of the vault. Expired documents replaced by a newer one live in `Archive/` inside their category folder (e.g. `01.IDs/Archive/`), never in Review. A topic or series with 5+ files may get one subfolder (e.g. `06.Education/Language-Course/`). To add a person later, use `99.System/Scripts/add_person.py <Name> <CODE>` (dry run first); never rename person folders by hand.
 
 ## Finding the vault and where to run commands
 

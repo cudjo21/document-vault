@@ -1,8 +1,8 @@
 {
   "name": "document-vault",
   "displayName": "Document Vault",
-  "version": "0.4.0",
-  "description": "A family document vault run by Claude: drop scans into an inbox and Claude reads them (privacy-masked), names and files them by person and category, combines front and back scans, parks duplicates for review, tracks expiry dates, prepares document packs for visa and other applications, and never deletes anything.",
+  "version": "0.5.0",
+  "description": "A family document vault run by Claude: drop scans into an inbox (or share from your iPhone) and Claude reads them privacy-masked, names and files them by person and category, combines front and back scans, parks duplicates for review, tracks and archives expired documents, prepares document packs for visa and other applications, and never deletes anything.",
   "author": {
     "name": "Ilya",
     "url": "https://github.com/cudjo21"
@@ -18,7 +18,9 @@
     "organize",
     "ocr",
     "visa",
-    "application"
+    "application",
+    "iphone",
+    "shortcut"
   ],
   "homepage": "https://github.com/cudjo21/document-vault",
   "repository": "https://github.com/cudjo21/document-vault"

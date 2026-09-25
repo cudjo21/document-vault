@@ -68,8 +68,9 @@ def scan(p):
              ext=ext, size=os.path.getsize(p), sha256=sha(p)); text = ''
     try:
         if ext == 'pdf':
-            info = run(['pdfinfo', p])
-            if 'Incorrect password' in info or 'Encrypted:       yes' in info: r['locked'] = True
+            pi = subprocess.run(['pdfinfo', p], capture_output=True, timeout=60)
+            info = (pi.stdout + pi.stderr).decode('utf-8', 'replace')   # "Incorrect password" is printed on stderr
+            if 'Incorrect password' in info: r['locked'] = True
             m = re.search(r'Pages:\s+(\d+)', info); r['pages'] = int(m.group(1)) if m else None
             m = re.search(r'Page size:\s+([\d.]+) x ([\d.]+)', info); pin = [float(m.group(1))/72, float(m.group(2))/72] if m else None
             imgs = [l.split() for l in run(['pdfimages', '-list', '-f', '1', '-l', '1', p]).splitlines()[2:] if len(l.split()) > 13]
@@ -88,6 +89,10 @@ def scan(p):
             if ext in ('heic', 'heif'):
                 td = tempfile.mkdtemp(); src = td+'/x.jpg'; run(['convert', p, src])
             im = Image.open(src); r['pixel_size'] = f'{im.size[0]}x{im.size[1]}'; r['pages'] = 1
+            if im.getexif().get(274, 1) != 1:   # phone photos: apply the orientation tag before reading
+                from PIL import ImageOps
+                td2 = tempfile.mkdtemp(); im = ImageOps.exif_transpose(im); src = td2 + '/upright.png'; im.save(src)
+                r['rotated'] = True
             r.update(metrics(im)); text, r['text_source'] = ocr(src), 'ocr'
         elif ext in ('xlsx', 'xlsm'):
             import openpyxl; wb = openpyxl.load_workbook(p, data_only=True, read_only=True)

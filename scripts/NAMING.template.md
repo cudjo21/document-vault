@@ -73,6 +73,10 @@ Claude reads it at the start of every run and follows it.
 01.IDs  02.Health  03.Finance  04.Legal  05.Work  06.Education
 07.Activities  08.Property  09.Vehicles  10.Travel  99.Misc
 
+Expired documents that were replaced (an old passport) move to Archive/ inside the same category
+folder (01.IDs/Archive/); they are history, not rubbish. A topic or series with 5 or more files
+gets its own subfolder, one level deep.
+
 One extra subfolder level is fine when volume needs it (Payslips/2025, a property's own folder,
 an Archive folder for grouped scans of expired documents).
 

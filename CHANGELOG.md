@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 (25 September 2026)
+- Check-up: expired documents that were replaced by a newer one are suggested for an `Archive` folder in the same category; expired ones without a replacement trigger a question (renewing or archive?).
+- Check-up: tidy suggestions, a subfolder when 5 or more files of one topic or series sit in one folder.
+- iPhone shortcut: save photos, PDFs and files into the Inbox from the Share button (link in the README and offered at set-up). Converts HEIC photos to full-quality JPEG.
+- Packs: "archive the pack" moves a finished pack to `90.Review/Packs` (logged, undoable).
+- Packs: password-protected PDFs are copied as usual but left out of combined PDFs. Claude says so before building (in the combined-PDF question and the plan table) and explains how to make an unlocked copy if a portal needs one file.
+- Inbox scan: password-protected PDFs are now flagged as locked.
+- Inbox scan: phone photos taken sideways or upside down are turned upright before reading (they came out as unreadable text before).
+
 ## 0.4.0 (25 September 2026)
 - New skill **Prepare a pack**: paste the list of documents an application asks for (visa, residence permit renewal, mortgage, school...), and Claude matches it to the vault, asks which passport to use when someone has several, flags expiring or outdated documents, and builds `80.Packs/<name>/` with numbered copies per person and a checklist.
 - Optional combined PDF per person or for the whole family, in list order, lossless.

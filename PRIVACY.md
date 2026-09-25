@@ -1,6 +1,6 @@
 # Privacy policy: Document Vault plugin
 
-Last updated: 25 September 2026
+Last updated: 25 September 2026 (version 0.5.0)
 
 ## Short version
 
@@ -21,6 +21,10 @@ Claude sees what the scripts print in your conversation: file names, page counts
 ## Network use
 
 The plugin makes one kind of network request: during set-up (or when you add a language) it downloads open-source OCR language files from the public tesseract-ocr project on GitHub (`raw.githubusercontent.com/tesseract-ocr/tessdata_fast`). Nothing about you or your documents is sent in that request. If a tool such as tesseract or poppler is missing, Claude tells you the command to install it from your usual package manager.
+
+## iPhone shortcut
+
+The optional "Document Vault" shortcut runs only on your iPhone. It saves what you share into your own `00.Inbox` folder in your own cloud drive (converting HEIC photos to JPEG). It sends nothing anywhere else, and adding it gives nobody access to your vault.
 
 ## Retention and deletion
 

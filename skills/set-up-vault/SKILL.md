@@ -63,5 +63,6 @@ Tell the user, in a few lines:
 - Nothing is ever deleted: extra copies and unclear files land in `90.Review` for them to check.
 - If the vault lives in a cloud drive, they can share the folder with their partner; the partner connects the same folder in their own Claude to use it.
 - Suggest a periodic "vault check-up" for expiring documents.
+- iPhone users can save straight from the Share button: offer the shortcut https://www.icloud.com/shortcuts/83377abbb92149ab889a9f1d1e554f1b (tap Add Shortcut, then check once that both Save File steps point to this vault's `00.Inbox`, and pick it if not). Android: share to the cloud drive's `00.Inbox` folder.
 
 Finally remove the scratch config `$HOME/vault-setup.json` (it is outside the vault).
