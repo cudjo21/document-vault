@@ -1,6 +1,6 @@
 ---
 name: process-inbox
-description: Files new documents from the Document Vault inbox - reads each one (masked), proposes a name and folder, handles duplicates and front/back scans, and moves them after approval. Use when the user says "process my inbox", "file my new documents", "I added scans to the vault" or similar.
+description: Files new documents from the Document Vault inbox - reads each one (masked), proposes a name and folder, handles duplicates and front/back scans, and moves them after approval. Also adds a new family member to the vault. Use when the user says "process my inbox", "file my new documents", "I added scans to the vault", "I shared photos from my phone", "add Leo to the vault" or similar.
 ---
 
 # Process the Document Vault inbox

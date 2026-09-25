@@ -1,6 +1,6 @@
 ---
 name: set-up-vault
-description: Creates a new family Document Vault in an empty folder - people, folder structure, naming rules, catalog and scripts. Use when the user says "set up a document vault", "create my document vault", "organize my family documents from scratch" or has no vault yet.
+description: Creates a new family Document Vault in an empty folder - people, folder structure, naming rules, catalog and scripts. Use when the user says "set up a document vault", "create my document vault", "organize my family documents from scratch" or has no vault yet. Ends by offering the iPhone Share shortcut.
 ---
 
 # Set up a Document Vault

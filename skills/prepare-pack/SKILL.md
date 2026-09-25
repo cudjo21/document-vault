@@ -1,6 +1,6 @@
 ---
 name: prepare-pack
-description: Prepares a document pack for an application (visa, residence permit renewal, citizenship, mortgage, school, new job) by matching a pasted list of required documents to the Document Vault and copying them, numbered in list order, per person. Use for "I'm applying for a visa, here's the list", "prepare the documents for our renewal", "make a pack for the consulate".
+description: Prepares a document pack for an application (visa, residence permit renewal, citizenship, mortgage, school, new job) by matching a pasted list of required documents to the Document Vault and copying them, numbered in list order, per person. Also archives a finished pack. Use for "I'm applying for a visa, here's the list", "prepare the documents for our renewal", "make a pack for the consulate", "archive the pack".
 ---
 
 # Prepare a document pack

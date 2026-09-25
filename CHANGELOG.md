@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.1 (25 September 2026)
+- Skill descriptions updated so Claude picks the right skill for the new requests: "tidy my vault", "archive expired documents", "archive the pack", "add Leo to the vault", "I shared photos from my phone".
+
 ## 0.5.0 (25 September 2026)
 - Check-up: expired documents that were replaced by a newer one are suggested for an `Archive` folder in the same category; expired ones without a replacement trigger a question (renewing or archive?).
 - Check-up: tidy suggestions, a subfolder when 5 or more files of one topic or series sit in one folder.

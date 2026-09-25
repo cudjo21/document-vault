@@ -1,6 +1,6 @@
 ---
 name: vault-check-up
-description: Runs a health check of the Document Vault - expiring passports and permits, files missing from the catalog, broken names, leftovers in Review. Use when the user asks "check my vault", "what documents are expiring", "vault check-up", "is my vault in order" or wants a periodic review.
+description: Runs a health check of the Document Vault - expiring passports and permits, expired documents to archive, tidy subfolder suggestions, files missing from the catalog, broken names, leftovers in Review. Use when the user asks "check my vault", "what documents are expiring", "archive expired documents", "tidy my vault", "is my vault in order" or wants a periodic review.
 ---
 
 # Vault check-up
