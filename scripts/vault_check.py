@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Read-only health check of a Document Vault. Never moves or changes anything.
-Usage: python3 vault_check.py [--months N]     (default N = 6)
+"""Health check of a Document Vault. Read-only: never moves or deletes anything.
+Usage: python3 vault_check.py [--months N] [--record-review-deletions]     (default N = 6)
+  --record-review-deletions: the only write. Files the user deleted from 90.Review get
+  status deleted-by-user in the catalog and a 'delete' line in the move log (recorded, not done by Claude).
 Reports:
   1. documents expired or expiring within N months (from catalog expiry_date)
   2. library files not in the catalog
@@ -8,7 +10,8 @@ Reports:
   4. names that break the naming convention
   5. tidy suggestions: 5+ files of one topic or series directly in one folder (--tidy-min N)
   6. expired documents outside an Archive folder: replaced by a newer one (archive) or not (ask)
-  7. empty folders, stray files at the top level, files waiting in the inbox or in Review
+  7. empty folders, stray files at the top level, files waiting in the inbox or in Review,
+     and Review files the user deleted that the catalog still lists
 Output is metadata only (paths, kinds, dates): no document content."""
 import os, sys, csv, re, datetime, json
 
@@ -108,6 +111,8 @@ def main():
                  and (parse(o.get("expiry_date", "") or "") or datetime.date.max) >= today]
         arch = os.path.join(os.path.dirname(r["path"]), "Archive") + "/"
         if newer: print(f"  replaced   {r['path']}  -> {arch}  (newer: {os.path.basename(newer[0]['path'])})")
+        elif "renewing" in (r.get("notes") or "").lower():
+                  print(f"  renewing   {r['path']}  (expired {d}; the user is renewing it: keep in place until the new one is filed)")
         else:     print(f"  ASK        {r['path']}  (expired {d}, no replacement in the vault: renew, or archive to {arch}?)")
         shown = True
     if not shown: print("  none")
@@ -140,6 +145,20 @@ def main():
             if os.path.isdir(os.path.join(rv, d)):
                 n = count(os.path.join("90.Review", d))
                 if n: print(f"  90.Review/{d}: {n} file(s)")
+    gone = [r for r in rows if r.get("path", "").startswith("90.Review/") and not r.get("status", "").startswith("deleted")
+            and not os.path.exists(os.path.join(VAULT, r["path"]))]
+    if gone and "--record-review-deletions" in sys.argv:
+        cat_p = os.path.join(SYS, "catalog.csv"); raw = list(csv.reader(open(cat_p, encoding="utf-8"))); H = raw[0]; I = {k: i for i, k in enumerate(H)}
+        ids = {r["path"] for r in gone}; ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        with open(os.path.join(SYS, "move-log.csv"), "a", encoding="utf-8") as log:
+            for x in raw[1:]:
+                if x[I["path"]] in ids and not x[I["status"]].startswith("deleted"):
+                    x[I["status"]] = "deleted-by-user"
+                    log.write(f'{ts},user-delete-{today},delete,"{x[I["path"]]}","",{x[I["sha256"]]},"deleted from Review by the user (recorded, not done by Claude)"\n')
+        csv.writer(open(cat_p, "w", newline="", encoding="utf-8")).writerows(raw)
+        print(f"  recorded {len(gone)} file(s) the user deleted from 90.Review")
+    elif gone:
+        print(f"  90.Review: {len(gone)} file(s) deleted by the user but still in the catalog; record with --record-review-deletions")
     print(f"  catalog: {len(filed)} filed documents, {len(rows)} rows")
 
 if __name__ == "__main__":

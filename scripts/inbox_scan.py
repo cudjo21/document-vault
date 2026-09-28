@@ -120,6 +120,8 @@ def scan(p):
     return r
 
 cat = list(csv.DictReader(open(os.path.join(SYS, 'catalog.csv'))))
+# only copies that still exist count: rows of files the user deleted (e.g. from 90.Review) are history, not keepers
+cat = [c for c in cat if c.get('path') and os.path.exists(os.path.join(VAULT, c['path']))]
 live = [c for c in cat if c.get('status') == 'filed']
 def ham(a, b): return bin(int(a, 16) ^ int(b, 16)).count('1')
 files = sorted(os.path.join(d, f) for d, _, fs in os.walk(INBOX) for f in fs if not f.startswith('.'))
@@ -127,7 +129,8 @@ out = []
 for p in files:
     r = scan(p); cands = []
     for c in cat:
-        if c['sha256'] == r['sha256']: cands.append(dict(path=c['path'], kind='exact', status=c['status']))
+        if c['sha256'] == r['sha256']:   # a copy waiting in 90.Review is not a keeper: the user may delete it
+            cands.append(dict(path=c['path'], kind='exact-in-review' if c['path'].startswith('90.Review/') else 'exact', status=c['status']))
     if r.get('dhash'):
         for c in live:
             if c.get('dhash') and ham(c['dhash'], r['dhash']) <= 6 and all(x['path'] != c['path'] for x in cands):

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2 (28 September 2026)
+- Inbox: a copy that only exists in `90.Review` no longer counts as a kept copy (new `exact-in-review` hint), and catalog rows of deleted files are ignored when looking for duplicates.
+- Check-up: files the user deleted from Review are reported and can be recorded with `--record-review-deletions`.
+- Check-up: expired documents with a "renewing" note stay in place without a question.
+
 ## 0.5.1 (25 September 2026)
 - Skill descriptions updated so Claude picks the right skill for the new requests: "tidy my vault", "archive expired documents", "archive the pack", "add Leo to the vault", "I shared photos from my phone".
 
