@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 (28 September 2026)
+- Health subfolders: 3 or more exams of one type or body area get their own folder (`02.Health/Blood-Tests/`, `Thyroid/`, `Heart/`, `Prescriptions/`), names still date-first. The check-up suggests them; the inbox files into existing subfolders.
+- Inbox: moving a library file back through the inbox no longer leaves a stray catalog row.
+
 ## 0.5.2 (28 September 2026)
 - Inbox: a copy that only exists in `90.Review` no longer counts as a kept copy (new `exact-in-review` hint), and catalog rows of deleted files are ignored when looking for duplicates.
 - Check-up: files the user deleted from Review are reported and can be recorded with `--record-review-deletions`.

@@ -68,7 +68,7 @@ Run it every month or two, or before a trip. It only reads, until you approve a 
 - **Expiring documents:** passports, permits and visas expired or expiring in the next 6 months (or any horizon you ask for), per person. Handy because many countries want 6 months of passport validity to enter.
 - **Out-of-place files:** documents added to the library by hand and missing from the catalog, catalog entries whose file has gone (or is only in the cloud, not downloaded), names that break the rules.
 - **Expired documents:** when a newer one exists (a renewed passport), it suggests moving the old one to an `Archive` folder in the same category. Expired documents are history, not rubbish: forms often ask for previous passports. When there's no replacement, it asks: say you're renewing, and it just reminds you until the new one is filed.
-- **Tidy suggestions:** when 5 or more files of one topic pile up in a folder (a course, an assessment, a property), it suggests a subfolder for them, like `06.Education/Language-Course/`.
+- **Tidy suggestions:** when 5 or more files of one topic pile up in a folder (a course, an assessment, a property), it suggests a subfolder for them, like `06.Education/Language-Course/`. In Health it groups exams by type or body area once there are 3 (`02.Health/Blood-Tests/`, `Thyroid/`, `Heart/`), each still in date order.
 - **What's waiting for you** in `90.Review` (duplicates, unclear files) and the Inbox.
 - **Fixes through the same logged process** as the inbox, so they can be undone. It can also set itself up as a monthly scheduled task.
 
@@ -162,7 +162,7 @@ DocumentVault/                              (in a cloud drive, shared with your 
 │   │   ├── AS_residence-permit-ESP_exp2027-03.pdf
 │   │   └── AS_visa-USA_exp2033-09.pdf
 │   ├── 02.Health/
-│   │   ├── AS_2025-04-12_blood-test.pdf
+│   │   ├── Blood-Tests/AS_2025-04-12_blood-test.pdf   (3+ exams of one type or body area)
 │   │   └── AS_insurance-card.pdf
 │   ├── 03.Finance/
 │   │   ├── Payslips/2025/AS_payslip-2025-05.pdf

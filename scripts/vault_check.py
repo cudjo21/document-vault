@@ -8,7 +8,8 @@ Reports:
   2. library files not in the catalog
   3. catalog rows marked filed whose file is missing (or only an iCloud placeholder)
   4. names that break the naming convention
-  5. tidy suggestions: 5+ files of one topic or series directly in one folder (--tidy-min N)
+  5. tidy suggestions: 5+ files of one topic or series directly in one folder (--tidy-min N);
+     in Health 3+ exams of one type
   6. expired documents outside an Archive folder: replaced by a newer one (archive) or not (ask)
   7. empty folders, stray files at the top level, files waiting in the inbox or in Review,
      and Review files the user deleted that the catalog still lists
@@ -90,11 +91,11 @@ def main():
         parts = d.split(os.sep)
         if parts[0] in flat or len(parts) != 2: continue          # only category folders; one level of subfolders at most
         if parts[1].endswith(".IDs"): continue                     # IDs stay together by kind (passports, cards)
-        if re.match(r"^[A-Z-]+_\d{4}-\d{2}-\d{2}_", f): continue   # dated medical exams stay in date order
-        stem = re.sub(r"^[A-Z]{2,4}(-[A-Z]+)?_", "", os.path.splitext(f)[0])
+        stem = re.sub(r"^[A-Z]{2,4}(-[A-Z]+)?_(\d{4}-\d{2}-\d{2}_)?", "", os.path.splitext(f)[0])   # dated exams group by type
         key = stem.split("-")[0][:6]
         by_dir.setdefault((d, key), []).append(f)
-    tidy = [(d, k, fs) for (d, k), fs in by_dir.items() if len(fs) >= TIDY_MIN]
+    tidy = [(d, k, fs) for (d, k), fs in by_dir.items()
+            if len(fs) >= (min(3, TIDY_MIN) if d.split(os.sep)[1].endswith("Health") else TIDY_MIN)]   # Health: 3+ exams of one type
     for d, k, fs in sorted(tidy):
         print(f"  {d}/  {len(fs)} files starting '{k}...': " + ", ".join(sorted(fs)[:4]) + (" ..." if len(fs) > 4 else ""))
     if not tidy: print("  none")

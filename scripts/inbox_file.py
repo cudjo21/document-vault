@@ -61,6 +61,9 @@ for src, d, e in steps:
     assert os.path.exists(V(d)) and not os.path.exists(V(src)), f'move failed: {src}'
     log.write(f'{ts},{BATCH},move,"{src}","{d}",{h},"{e.get("reason","").replace(chr(34),chr(39))}"\n'); log.flush()
     if e['action'] == 'move':
+        if d.startswith('00.Inbox/'):   # back through the inbox: its catalog row is written again when it is filed
+            rows[:] = [rows[0]] + [r for r in rows[1:] if r[I['path']] != src]
+            continue
         hit = False
         for r in rows[1:]:
             if r[I['path']] == src: r[I['path']] = d; r[I['status']] = e.get('status', 'in-review'); hit = True

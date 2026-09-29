@@ -29,6 +29,9 @@ Claude reads it at the start of every run and follows it.
 - Medical exams (lab results, tests, imaging, doctor reports): the exam date goes right after WHO,
   so the Health folder sorts chronologically: AS_2025-10-06_blood-test.pdf.
   Insurance cards and policies in Health follow the normal pattern.
+- Health: once 3 or more exams share a type or body area, they get a subfolder
+  (02.Health/Blood-Tests/, Thyroid/, Heart/, Prescriptions/). Names keep the date first, so each
+  subfolder is a timeline. One-off exams, insurance cards and supplement lists stay in 02.Health.
 - Dates are always the date printed on the document, never the scan or file date.
 
 ## One document = one file
@@ -75,7 +78,7 @@ Claude reads it at the start of every run and follows it.
 
 Expired documents that were replaced (an old passport) move to Archive/ inside the same category
 folder (01.IDs/Archive/); they are history, not rubbish. A topic or series with 5 or more files
-gets its own subfolder, one level deep.
+gets its own subfolder, one level deep. In Health the threshold is 3 exams of one type or body area.
 
 One extra subfolder level is fine when volume needs it (Payslips/2025, a property's own folder,
 an Archive folder for grouped scans of expired documents).
